@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "706231173089",
+    "firebase_url": "https://eshhun-51b68-default-rtdb.firebaseio.com",
+    "project_id": "eshhun-51b68",
+    "storage_bucket": "eshhun-51b68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706231173089:android:1c9173b54d65e550309ca0",
+        "android_client_info": {
+          "package_name": "com.eshhun"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS_ddcwlsSb7hzavsPaHzlt0xhr7y-8_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
