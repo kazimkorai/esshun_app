@@ -383,7 +383,6 @@ class RiderWidgetState extends State<RiderWidget> {
                           log(sourceLocation.text);
                           log(destinationLocation.text);
                           showBottomSheetType(context);
-
                         }
                       } else {
                         //
@@ -394,8 +393,13 @@ class RiderWidgetState extends State<RiderWidget> {
                       children: [
                         Icon(Icons.my_location_sharp, color: Colors.white),
                         SizedBox(width: 16),
-                        Text(language.chooseOnMap,
-                            style: boldTextStyle(color: Colors.white)),
+                        InkWell(
+                          onTap: (){
+                            showBottomSheetType(context);
+                          },
+                          child: Text(language.chooseOnMap,
+                              style: boldTextStyle(color: Colors.white)),
+                        ),
                       ],
                     ),
                   ),

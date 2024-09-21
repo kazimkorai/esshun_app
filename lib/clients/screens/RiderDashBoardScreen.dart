@@ -317,7 +317,6 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
 
         if (Navigator.canPop(navigatorKey.currentState!.overlay!.context)) {
           Navigator.pop(navigatorKey.currentState!.overlay!.context);
-
         }
       }
     }, onError: (error) {

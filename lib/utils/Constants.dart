@@ -212,7 +212,7 @@ const IS_TIME = 'IS_TIME';
 var errorSomethingWentWrong = 'Something Went Wrong';
 
 
-////
+////zip -r project_name.zip . -x "*.git*" -x "*build*" -x "*.idea*" -x "*.gradle*" -x "*.dart_tool*" -x "ios/Pods/*" -x "android/.cxx/*"
 
 
 
