@@ -1,9 +1,13 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:taxi_driver/clients/screens/RiderDashBoardScreen.dart';
+import 'package:taxi_driver/clients/screens/select_services_screen.dart';
+import 'package:taxi_driver/clients/service/AuthService.dart';
 import '../../main.dart';
+import '../../utils/Colors.dart';
 import '../../utils/Common.dart';
 import '../../utils/Constants.dart';
 import '../main.dart';
@@ -28,6 +32,8 @@ class RiderWidget extends StatefulWidget {
 }
 
 class RiderWidgetState extends State<RiderWidget> {
+  var isLoading = false; // Simulate loading state
+
   TextEditingController sourceLocation = TextEditingController();
   TextEditingController destinationLocation = TextEditingController();
   TextEditingController goodsValueTxt = TextEditingController();
@@ -36,20 +42,21 @@ class RiderWidgetState extends State<RiderWidget> {
 
   int selectedIndex = -1;
   String mLocation = "";
-  bool isDone = true;
-  bool isPickup = true;
-  bool isDrop = false;
+  var isDone = true;
+  var isPickup = true;
+  var isDrop = false;
   double? totalAmount;
   double? subTotal;
   double? amount;
   List<ServiceList> servicesList = [];
+  List<ServiceList> subServiceList = [];
   LocationModel? model;
   ServiceList? serviceList;
 
   List<ServiceList> list = [];
   List<Prediction> listAddress = [];
 
-  List<ServiceList> subServiceList = [];
+
   List<String> listLoadTypes = [
     "Food",
     "Building Materials",
@@ -57,12 +64,14 @@ class RiderWidgetState extends State<RiderWidget> {
     "Tools And Equipment",
     'Other'
   ];
-  dynamic dropdownValue1;
+  var dropdownValue1=null;
 
-  dynamic dropdownValue2;
+  dynamic dropdownValue2=null;
 
   String dropdownValue3 = 'Goods Value';
   String loadTypes = 'Food';
+
+  bool showListView = true; // Control visibility of ListView
 
   @override
   void initState() {
@@ -116,9 +125,7 @@ class RiderWidgetState extends State<RiderWidget> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: MediaQuery
-            .of(context)
-            .viewInsets,
+        padding: MediaQuery.of(context).viewInsets,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -141,10 +148,7 @@ class RiderWidgetState extends State<RiderWidget> {
                   SizedBox(height: 16),
                   Container(
                     padding: EdgeInsets.only(bottom: 16),
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         color: primaryColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(defaultRadius)),
@@ -192,7 +196,7 @@ class RiderWidgetState extends State<RiderWidget> {
                                     focusNode: sourceFocus,
                                     decoration: InputDecoration(
                                         contentPadding:
-                                        EdgeInsets.symmetric(vertical: 8),
+                                            EdgeInsets.symmetric(vertical: 8),
                                         isDense: true,
                                         hintStyle: primaryTextStyle(),
                                         labelStyle: primaryTextStyle(),
@@ -234,7 +238,7 @@ class RiderWidgetState extends State<RiderWidget> {
                                     autofocus: true,
                                     decoration: InputDecoration(
                                         contentPadding:
-                                        EdgeInsets.symmetric(vertical: 8),
+                                            EdgeInsets.symmetric(vertical: 8),
                                         isDense: true,
                                         hintStyle: primaryTextStyle(),
                                         labelStyle: primaryTextStyle(),
@@ -290,7 +294,7 @@ class RiderWidgetState extends State<RiderWidget> {
                             style: primaryTextStyle()),
                         onTap: () async {
                           await searchAddressRequestPlaceId(
-                              placeId: mData.placeId)
+                                  placeId: mData.placeId)
                               .then((value) async {
                             var data = value.result!.geometry;
                             if (sourceFocus.hasFocus) {
@@ -302,7 +306,10 @@ class RiderWidgetState extends State<RiderWidget> {
 
                               if (sourceLocation.text.isNotEmpty &&
                                   destinationLocation.text.isNotEmpty) {
-                                showBottomSheetType(context);
+                                launchScreen(
+                                    context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                                    pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
+                                // showBottomSheetType(context);
                                 // launchScreen(
                                 //     context, NewEstimateRideListWidget(sourceLatLog: polylineSource, destinationLatLog: polylineDestination, sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
                                 //     pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
@@ -316,7 +323,10 @@ class RiderWidgetState extends State<RiderWidget> {
                                   data!.location!.lat!, data.location!.lng!);
                               if (sourceLocation.text.isNotEmpty &&
                                   destinationLocation.text.isNotEmpty) {
-                                showBottomSheetType(context);
+                                launchScreen(
+                                    context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                                    pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
+                                //  showBottomSheetType(context);
                                 // launchScreen(
 
                                 //     context, NewEstimateRideListWidget(sourceLatLog: polylineSource, destinationLatLog: polylineDestination, sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
@@ -336,10 +346,7 @@ class RiderWidgetState extends State<RiderWidget> {
                   ),
                   SizedBox(height: 16),
                   AppButtonWidget(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width,
+                    width: MediaQuery.of(context).size.width,
                     color: primaryColor,
                     onTap: () async {
                       if (sourceFocus.hasFocus) {
@@ -347,7 +354,7 @@ class RiderWidgetState extends State<RiderWidget> {
                         PickResult selectedPlace = await launchScreen(
                             context, NewGoogleMapScreen(isDestination: false),
                             pageRouteAnimation:
-                            PageRouteAnimation.SlideBottomTop);
+                                PageRouteAnimation.SlideBottomTop);
                         log(selectedPlace);
                         mLocation = selectedPlace.formattedAddress!;
                         sourceLocation.text = selectedPlace.formattedAddress!;
@@ -359,7 +366,11 @@ class RiderWidgetState extends State<RiderWidget> {
                             destinationLocation.text.isNotEmpty) {
                           log(sourceLocation.text);
                           log(destinationLocation.text);
-                          showBottomSheetType(context);
+
+                          launchScreen(
+                              context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                              pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
+                          //  showBottomSheetType(context);
                           // launchScreen(
                           //     context, NewEstimateRideListWidget(sourceLatLog: polylineSource, destinationLatLog: polylineDestination, sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
                           //     pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
@@ -371,18 +382,19 @@ class RiderWidgetState extends State<RiderWidget> {
                         PickResult selectedPlace = await launchScreen(
                             context, NewGoogleMapScreen(isDestination: true),
                             pageRouteAnimation:
-                            PageRouteAnimation.SlideBottomTop);
+                                PageRouteAnimation.SlideBottomTop);
 
                         destinationLocation.text =
-                        selectedPlace.formattedAddress!;
+                            selectedPlace.formattedAddress!;
                         polylineDestination = LatLng(
                             selectedPlace.geometry!.location.lat,
                             selectedPlace.geometry!.location.lng);
 
-                        if (sourceLocation.text.isNotEmpty && destinationLocation.text.isNotEmpty) {
+                        if (sourceLocation.text.isNotEmpty &&
+                            destinationLocation.text.isNotEmpty) {
                           log(sourceLocation.text);
                           log(destinationLocation.text);
-                          showBottomSheetType(context);
+                          //  showBottomSheetType(context);
                         }
                       } else {
                         //
@@ -395,7 +407,14 @@ class RiderWidgetState extends State<RiderWidget> {
                         SizedBox(width: 16),
                         InkWell(
                           onTap: (){
-                            showBottomSheetType(context);
+
+
+
+                            // launchScreen(
+                            //     context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                            //     pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
+
+                        //    getBottomSheetServices();
                           },
                           child: Text(language.chooseOnMap,
                               style: boldTextStyle(color: Colors.white)),
@@ -412,6 +431,153 @@ class RiderWidgetState extends State<RiderWidget> {
     );
   }
 
+
+  Widget getServicesWidget(){
+    return  Stack(
+      children: [
+        Visibility(
+          visible: servicesList.isNotEmpty,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Services"),
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 8, top: 16),
+                      height: 5,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.blue, // primaryColor
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: servicesList.map((e) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              // Handle service tap
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                            margin: EdgeInsets.only(top: 16, left: 8, right: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 8),
+                                Image.network(
+                                  e.serviceImage.toString(),
+                                  height: 50,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 8),
+                                Text(e.name.toString(), style: TextStyle(fontWeight: FontWeight.bold, color: primaryColor)),
+                                SizedBox(height: 8),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Capacity:', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                    SizedBox(width: 4),
+                                    Text('${e.capacity} + 1', style: TextStyle(color: primaryColor)),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Your Text Here k'),
+                          SizedBox(width: 8.0),
+                          Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Button to show ListView
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                showListView = !showListView; // Toggle ListView visibility
+                              });
+                            },
+                            child: Text('Show List', style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Additional Data"),
+                  if (showListView) // Show ListView if toggle is true
+                    Container(
+                      height: 200, // Set height for ListView
+                      child: ListView.builder(
+                        itemCount: servicesList.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: Image.network(servicesList[index].serviceImage.toString()),
+                            title: Text(servicesList[index].name.toString()),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Visibility(
+          visible: isLoading,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ],
+    );
+  }
+
   Future<void> getSubServices(String id) async {
     subServiceList.clear();
     await getSubServicesById(id).then((value) {
@@ -422,301 +588,6 @@ class RiderWidgetState extends State<RiderWidget> {
       });
     });
   }
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Goods Value',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                    ),
-                  ],
-                ),
-                Text("Please enter the values of products"),
-                SizedBox(height: 10),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  controller: goodsValueTxt,
-                  decoration: InputDecoration(
-                    labelText: 'Value',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                    alignment: Alignment.center,
-                    child: AppButtonWidget(
-
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      text: "DONE",
-                      textColor: Colors.white,
-                      color: borderColor,
-                      width: MediaQuery.of(context).size.width,
-                    )),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void showBottomSheetType(BuildContext context) {
-    bool loading = false; // Add loading state
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      isScrollControlled: true,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
-            // Set default values for the dropdowns if available
-            if (servicesList.isNotEmpty && dropdownValue1 == null) {
-              setModalState(() {
-                dropdownValue1 = servicesList.length > 1 ? servicesList[1] : servicesList[0];
-                // Show progress indicator while fetching subservices
-                loading = true;
-                getSubServices(dropdownValue1.id.toString()).then((_) {
-                  setModalState(() {
-                    dropdownValue2 = subServiceList.length > 1
-                        ? subServiceList[1]
-                        : subServiceList.isNotEmpty
-                        ? subServiceList[0]
-                        : null;
-                    loading = false; // Hide progress indicator once done
-                  });
-                });
-              });
-            }
-
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Show loading indicator
-                Column(
-                    children: [
-                      // First row with two dropdowns
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(1),
-                              ),
-                              child: servicesList.isNotEmpty
-                                  ? DropdownButtonHideUnderline(
-                                child: DropdownButton<dynamic>(
-                                  value: dropdownValue1,
-                                  items: servicesList
-                                      .map<DropdownMenuItem<dynamic>>(
-                                          (item) {
-                                        return DropdownMenuItem<dynamic>(
-                                          value: item,
-                                          child: Row(
-                                            children: [
-                                              item.serviceImage.toString() !=
-                                                  'null'
-                                                  ? Image.network(
-                                                item.serviceImage
-                                                    .toString(),
-                                                width: 35,
-                                                height: 35,
-                                              )
-                                                  : Text('No Image'),
-                                              SizedBox(width: 8),
-                                              Text(item.name.toString()),
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
-                                  onChanged: (newValue) {
-                                    setModalState(() {
-                                      dropdownValue1 = newValue;
-                                      loading = true; // Start loading
-                                    });
-                                    getSubServices(dropdownValue1.id
-                                        .toString())
-                                        .then((_) {
-                                      setModalState(() {
-                                        dropdownValue2 =
-                                        subServiceList.length > 1
-                                            ? subServiceList[1]
-                                            : subServiceList
-                                            .isNotEmpty
-                                            ? subServiceList[0]
-                                            : null;
-                                        loading = false; // Stop loading
-                                      });
-                                    });
-                                  },
-                                ),
-                              )
-                                  : Center(child: Text("Not Found")),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: dropdownValue1 != null
-                                ? Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                BorderRadius.circular(1),
-                              ),
-                              child: subServiceList.isNotEmpty
-                                  ?  DropdownButtonHideUnderline(
-                                child: DropdownButton<dynamic>(
-                                  value: dropdownValue2,
-                                  items: subServiceList.map<
-                                      DropdownMenuItem<
-                                          dynamic>>((item) {
-                                    return DropdownMenuItem<
-                                        dynamic>(
-                                      value: item,
-                                      child: Text(
-                                          item.name.toString()),
-                                    );
-                                  }).toList(),
-                                  onChanged: (newValue) {
-                                    setModalState(() {
-                                      dropdownValue2 = newValue;
-                                    });
-                                  },
-                                ),
-                              )
-                                  : Container(
-                                height: 45,
-                                child:  loading
-                                    ? Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                                    :  Center(
-                                    child: Text("Not found")),
-                              ),
-                            )
-                                : Container(
-                              height: 45,
-                              child: Center(child: Text("Not found")),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      // Second row with a dropdown and counter
-                      Row(
-                        children: [
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                _showBottomSheet(context);
-                              },
-                              child: Container(
-                                child: Center(
-                                    child: Text(
-                                        goodsValueTxt.text.isEmpty
-                                            ? 'Goods value'
-                                            : goodsValueTxt.text)),
-                                height: 45,
-                                width: 55,
-                                decoration: BoxDecoration(
-                                  color: Colors
-                                      .white, // Background color
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                      1), // Rounded corners
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(1),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: loadTypes,
-                                  onChanged: (String? newValue) {
-                                    setModalState(() {
-                                      loadTypes = newValue!;
-                                    });
-                                  },
-                                  items: listLoadTypes.map<
-                                      DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(" " + value),
-                                        );
-                                      }).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      AppButtonWidget(
-                        width: MediaQuery.of(context).size.width,
-                        color: borderColor,
-                        text: "Go Next",
-                        textStyle: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                        onTap: () {
-
-                          launchScreen(
-                              context, NewEstimateRideListWidget(sourceLatLog: polylineSource, destinationLatLog: polylineDestination, sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
-                              pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
-
-                          sourceLocation.clear();
-                          destinationLocation.clear();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-
-
 }
+
+

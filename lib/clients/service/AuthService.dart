@@ -47,6 +47,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 // }
 
 class GoogleAuthServices {
+  static bool showListView = false;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   AuthServices authService = AuthServices();
 

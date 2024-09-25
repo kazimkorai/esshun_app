@@ -81,12 +81,11 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
     await prefs.setString('user_role', role);
   }
 
-  dynamic dropdownValue1;
+  bool showListView = false;
 
-  dynamic dropdownValue2;
 
-  String dropdownValue3 = 'Goods Value';
-  String loadTypes = 'Food';
+  // Control visibility of ListView
+
   PanelController _panelController = PanelController();
   bool isPanelOpen = false;
   List<ServiceList> servicesList = [];
@@ -127,6 +126,7 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
     loginUser("client");
   }
 
+  var isLoading = false; // Simulate loading state
   Future<void> getSubServices(String id) async {
     subServiceList.clear();
     await getSubServicesById(id).then((value) {
@@ -501,6 +501,7 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
       ),
       body: sourceLocation != null
           ? Stack(
+              alignment: Alignment.center,
               children: [
                 GoogleMap(
                   zoomControlsEnabled: true,
@@ -518,271 +519,27 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
                     bearing: cameraBearing,
                   ),
                 ),
-                SlidingUpPanel(
-                  controller: _panelController,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(defaultRadius),
-                      topRight: Radius.circular(defaultRadius)),
-                  backdropColor: primaryColor,
-                  color: Color(0xFFF8F8F8),
-                  onPanelOpened: () {
-                    setState(() {
-                      isPanelOpen = true; // Panel is open
-                    });
-                  },
-                  onPanelClosed: () {
-                    setState(() {
-                      isPanelOpen = false; // Panel is open
-                    });
-                  },
-                  backdropTapClosesPanel: true,
-                  minHeight: 130,
-                  maxHeight: 200,
-                  panel: !isSourcceDest
-                      ? Column(
-                          children: [
-                            Center(
-                              child: Container(
-                                height: 35,
-                                color: borderColor,
-                                width: MediaQuery.of(context).size.width,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (_panelController.isPanelOpen) {
-                                        _panelController.close();
-                                      } else {
-                                        _panelController.open();
-                                      }
-                                    });
-                                  },
-                                  child: Icon(
-                                    isPanelOpen
-                                        ? Icons.keyboard_arrow_down
-                                        : Icons.keyboard_arrow_up,
-                                    size: 30,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  // First row with two dropdowns
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors
-                                                .white, // Background color
-                                            borderRadius: BorderRadius.circular(
-                                                1), // Rounded corners
-                                          ),
-                                          child: servicesList.length > 0
-                                              ? DropdownButtonHideUnderline(
-                                                  child:
-                                                      DropdownButton<dynamic>(
-                                                    value: dropdownValue1,
-                                                    items: servicesList.map<
-                                                        DropdownMenuItem<
-                                                            dynamic>>((item) {
-                                                      return DropdownMenuItem<
-                                                          dynamic>(
-                                                        value: item,
-                                                        child: Row(
-                                                          children: [
-                                                            item.serviceImage
-                                                                        .toString() !=
-                                                                    'null'
-                                                                ? commonCachedNetworkImage(
-                                                                    item.serviceImage,
-                                                                    width: 35,
-                                                                    height: 35)
-                                                                : Text('No'),
-                                                            Text("  " +
-                                                                item.name
-                                                                    .toString()),
-                                                          ],
-                                                        ),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (newValue) {
-                                                      setState(() {
-                                                        dropdownValue1 =
-                                                            newValue;
-                                                        getSubServices(
-                                                            dropdownValue1.id
-                                                                .toString());
-                                                      });
-                                                    },
-                                                  ),
-                                                )
-                                              : Text("Not Found"),
-                                        ),
-                                      ),
-                                      SizedBox(width: 16),
-                                      Expanded(
-                                        child: dropdownValue1.toString() !=
-                                                "null"
-                                            ? Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors
-                                                      .white, // Background color
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          1), // Rounded corners
-                                                ),
-                                                child: subServiceList.length > 0
-                                                    ? DropdownButtonHideUnderline(
-                                                        child: DropdownButton<
-                                                            dynamic>(
-                                                          value: dropdownValue2,
-                                                          items: subServiceList.map<
-                                                                  DropdownMenuItem<
-                                                                      dynamic>>(
-                                                              (item) {
-                                                            return DropdownMenuItem<
-                                                                dynamic>(
-                                                              value: item,
-                                                              child: Row(
-                                                                children: [
-                                                                  Text(item.name
-                                                                      .toString()),
-                                                                ],
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                          onChanged:
-                                                              (newValue) {
-                                                            setState(() {
-                                                              dropdownValue2 =
-                                                                  newValue;
-                                                              //getSubServices(dropdownValue1.id.toString());
-                                                            });
-                                                          },
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        height: 45,
-                                                        child: Center(
-                                                            child: Text(
-                                                                "Not found"))),
-                                              )
-                                            : Container(
-                                                height: 45,
-                                                child: Center(
-                                                    child: Text("Not found"))),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 16),
-
-                                  // Second row with one dropdown and a counter
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: InkWell(
-                                          onTap: () {
-                                            _showBottomSheet(context);
-                                          },
-                                          child: Container(
-                                            child: Center(
-                                                child: Text(
-                                                    goodsValueTxt.text.isEmpty
-                                                        ? 'Goods value'
-                                                        : goodsValueTxt.text)),
-                                            height: 45,
-                                            width: 55,
-                                            decoration: BoxDecoration(
-                                              color: Colors
-                                                  .white, // Background color
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      1), // Rounded corners
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 16),
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors
-                                                .white, // Background color
-                                            borderRadius: BorderRadius.circular(
-                                                1), // Rounded corners
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<String>(
-                                              value: loadTypes,
-                                              iconEnabledColor: Colors.grey,
-                                              iconDisabledColor: Colors.grey,
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  loadTypes = newValue!;
-                                                });
-                                              },
-                                              items: listLoadTypes.map<
-                                                      DropdownMenuItem<String>>(
-                                                  (String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Text(" " + value),
-                                                );
-                                              }).toList(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                  // Third row with two dropdowns
-
-                                  SizedBox(height: 16),
-
-                                  // Last row with a button
-
-                                  AppButtonWidget(
-                                    width: MediaQuery.of(context).size.width,
-                                    color: borderColor,
-                                    text: "Pick Location",
-                                    textStyle:
-                                        boldTextStyle(color: Colors.white),
-                                    onTap: () async {
-                                      if (await checkPermission()) {
-                                        showModalBottomSheet(
-                                          isScrollControlled: true,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(
-                                                    defaultRadius),
-                                                topRight: Radius.circular(
-                                                    defaultRadius)),
-                                          ),
-                                          context: context,
-                                          builder: (_) {
-                                            return RiderWidget(
-                                                title: sourceLocationTitle);
-                                          },
-                                        );
-                                      }
-                                      // getNearByDriverList(
-                                      //     latLng: sourceLocation);
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
+               SlidingUpPanel(
+                        controller: _panelController,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(defaultRadius),
+                            topRight: Radius.circular(defaultRadius)),
+                        backdropColor: primaryColor,
+                        color: Color(0xFFF8F8F8),
+                        onPanelOpened: () {
+                          setState(() {
+                            isPanelOpen = true; // Panel is open
+                          });
+                        },
+                        onPanelClosed: () {
+                          setState(() {
+                            isPanelOpen = false; // Panel is open
+                          });
+                        },
+                        backdropTapClosesPanel: true,
+                        minHeight: 130,
+                        maxHeight: 200,
+                        panel: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Center(
@@ -818,8 +575,9 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
                                     ),
                                     context: context,
                                     builder: (_) {
-                                      return RiderWidget(
-                                          title: sourceLocationTitle);
+                                      return
+                                        RiderWidget(
+                                        title: sourceLocationTitle);
                                     },
                                   );
                                 }
@@ -849,72 +607,152 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
                             SizedBox(height: 16),
                           ],
                         ),
-                ),
+                      ),
               ],
             )
           : loaderWidget(),
     );
   }
 
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
+  Widget getServicesWidget() {
+    return Stack(
+      children: [
+        Visibility(
+          visible: servicesList.isNotEmpty,
           child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Goods Value',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Services"),
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 8, top: 16),
+                      height: 5,
+                      width: 70,
+                      decoration: BoxDecoration(
+                        color: Colors.blue, // primaryColor
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.pop(context); // Close the bottom sheet
-                      },
-                    ),
-                  ],
-                ),
-                Text("Please enter the values of products"),
-                SizedBox(height: 10),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  controller: goodsValueTxt,
-                  decoration: InputDecoration(
-                    labelText: 'Value',
-                    border: OutlineInputBorder(),
                   ),
-                ),
-                SizedBox(height: 20),
-                Align(
-                    alignment: Alignment.center,
-                    child: AppButtonWidget(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      text: "DONE",
-                      textColor: Colors.white,
-                      color: borderColor,
-                      width: MediaQuery.of(context).size.width,
-                    )),
-              ],
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: servicesList.map((e) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              // Handle service tap
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 10),
+                            margin: EdgeInsets.only(top: 16, left: 8, right: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 8),
+                                Image.network(
+                                  e.serviceImage.toString(),
+                                  height: 50,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 8),
+                                Text(e.name.toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor)),
+                                SizedBox(height: 8),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Capacity:',
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    SizedBox(width: 4),
+                                    Text('${e.capacity} + 1',
+                                        style: TextStyle(color: primaryColor)),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Your Text Here k'),
+                          SizedBox(width: 8.0),
+                          Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Button to show ListView
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                showListView =
+                                    !showListView; // Toggle ListView visibility
+                              });
+                            },
+                            child: Text('Show List',
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  Text("Additional Data"),
+                ],
+              ),
             ),
           ),
-        );
-      },
+        ),
+        Visibility(
+          visible: isLoading,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      ],
     );
   }
 }

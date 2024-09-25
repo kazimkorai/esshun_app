@@ -99,6 +99,9 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
   void initState() {
     super.initState();
     init();
+
+
+    
   }
 
   void init() async {
@@ -631,6 +634,7 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+
                                       Center(
                                         child: Container(
                                           alignment: Alignment.center,
@@ -818,6 +822,7 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
                               : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text("data"),
                                     Center(
                                       child: Container(
                                         alignment: Alignment.center,
@@ -1068,6 +1073,7 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
                                                               ],
                                                             ),
                                                             SizedBox(height: 4),
+
                                                             Text(
                                                                 language
                                                                     .chooseYouPaymentLate,
@@ -1101,7 +1107,10 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
                                                                             boldTextStyle()),
                                                                     onChanged:
                                                                         (String?
-                                                                            val) {},
+                                                                            val) {
+
+                                                                      print(val);
+                                                                        },
                                                                   )
                                                                 : Column(
                                                                     children:
@@ -1360,6 +1369,8 @@ class NewEstimateRideListWidgetState extends State<NewEstimateRideListWidget> {
                                       ),
                                     ),
                                     SizedBox(height: 16),
+
+                                    Text("data")
                                   ],
                                 ),
                         ),

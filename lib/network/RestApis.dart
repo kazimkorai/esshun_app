@@ -33,6 +33,7 @@ import '../model/WalletDetailModel.dart';
 import '../model/WalletListModel.dart';
 import '../model/WithDrawListModel.dart';
 
+import '../model/new_service_model.dart';
 import '../screens/LoginScreenDriver.dart';
 import '../utils/Constants.dart';
 import '../utils/Extensions/app_common.dart';
@@ -294,12 +295,34 @@ Future<ChangePasswordResponseModel> forgotPassword(Map req) async {
 }
 
 Future<ServiceModel> getServices() async {
-  var kk = await handleResponse(
-      await buildHttpResponse('service-list', method: HttpMethod.GET));
 
-  print(kk);
   return ServiceModel.fromJson(await handleResponse(
       await buildHttpResponse('service-list', method: HttpMethod.GET)));
+}
+
+
+Future<List<ListServicesModel>> getServicesRider() async {
+  var service= mServiceModel.fromJson(await handleResponse(
+      await buildHttpResponse('get-service', method: HttpMethod.GET)));
+
+  return  service.data;
+
+}
+
+Future<List<ListServicesModel>> getSubServicesByIdRider(String id)async{
+
+
+ var service= mServiceModel.fromJson(await handleResponse(
+      await buildHttpResponse('get-sub-service/'+id, method: HttpMethod.GET)));
+
+ return service.data;
+}
+
+Future<ServiceModel> getSubServicesById(String id)async{
+
+
+  return ServiceModel.fromJson(await handleResponse(
+      await buildHttpResponse('get-sub-service/'+id, method: HttpMethod.GET)));
 }
 
 Future<UserDetailModel> getUserDetail({int? userId}) async {

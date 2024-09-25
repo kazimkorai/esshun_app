@@ -6,7 +6,7 @@ import '../main.dart';
 const mAppName = 'eshhun';
 var errorThisFieldRequired = 'This field is required';
 const RIDE_FOR_OTHER = 'RIDE_FOR_OTHER';
-const googleMapAPIKey = 'AIzaSyBWPgRQXLuI_kx4XJgZ7AsviTk34kht6TY';
+const googleMapAPIKey = '';
 
 const DOMAIN_URL = 'https://eshhun.om'; // Don't add slash at the end of the url
 const mBaseUrl = "$DOMAIN_URL/api/";
