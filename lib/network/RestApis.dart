@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:taxi_driver/clients/model/EstimatePriceModel.dart';
 import 'package:taxi_driver/login_option_screen.dart';
 import 'package:taxi_driver/model/DocumentListModel.dart';
 import 'package:taxi_driver/model/RideDetailModel.dart';
@@ -13,6 +14,7 @@ import 'package:taxi_driver/model/RiderListModel.dart';
 import 'package:taxi_driver/model/UserDetailModel.dart';
 import 'package:taxi_driver/utils/Extensions/StringExtensions.dart';
 
+import '../clients/model/new_model/new_sub_cat_model.dart';
 import '../clients/screens/RiderDashBoardScreen.dart';
 import '../main.dart';
 import '../model/AdditionalFeesList.dart';
@@ -300,17 +302,19 @@ Future<ServiceModel> getServices() async {
       await buildHttpResponse('service-list', method: HttpMethod.GET)));
 }
 
-
-Future<List<ListServicesModel>> getServicesRider() async {
+Future<List<ListServicesModel>> getServicesRiderNew() async {
   var service= mServiceModel.fromJson(await handleResponse(
       await buildHttpResponse('get-service', method: HttpMethod.GET)));
+ return service.data;
+}
 
-  return  service.data;
+Future<ServicesListDataEstimate> getServicesRider() async {
+  return ServicesListDataEstimate.fromJson(await handleResponse(
+      await buildHttpResponse('get-service', method: HttpMethod.GET)));
 
 }
 
 Future<List<ListServicesModel>> getSubServicesByIdRider(String id)async{
-
 
  var service= mServiceModel.fromJson(await handleResponse(
       await buildHttpResponse('get-sub-service/'+id, method: HttpMethod.GET)));

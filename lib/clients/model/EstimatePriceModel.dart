@@ -3,7 +3,7 @@ import '../model/PaginationModel.dart';
 import 'CouponData.dart';
 
 class EstimatePriceModel {
-  List<ServicesListData>? data;
+  List<ServicesListDataEstimate>? data;
   PaginationModel? pagination;
   String? message;
 
@@ -11,7 +11,7 @@ class EstimatePriceModel {
 
   factory EstimatePriceModel.fromJson(Map<String, dynamic> json) {
     return EstimatePriceModel(
-      data: json['data'] != null ? (json['data'] as List).map((i) => ServicesListData.fromJson(i)).toList() : null,
+      data: json['data'] != null ? (json['data'] as List).map((i) => ServicesListDataEstimate.fromJson(i)).toList() : null,
       pagination: json['pagination'] != null ? PaginationModel.fromJson(json['pagination']) : null,
       message: json['message'],
     );
@@ -30,7 +30,7 @@ class EstimatePriceModel {
   }
 }
 
-class ServicesListData {
+class ServicesListDataEstimate {
   double? adminCommission;
   num? baseFare;
   num? cancellationFee;
@@ -72,7 +72,7 @@ class ServicesListData {
   num? serviceId;
   String? description;
 
-  ServicesListData({
+  ServicesListDataEstimate({
     this.adminCommission,
     this.baseFare,
     this.cancellationFee,
@@ -115,8 +115,8 @@ class ServicesListData {
     this.description,
   });
 
-  factory ServicesListData.fromJson(Map<String, dynamic> json) {
-    return ServicesListData(
+  factory ServicesListDataEstimate.fromJson(Map<String, dynamic> json) {
+    return ServicesListDataEstimate(
       adminCommission: json['admin_commission'],
       baseFare: json['base_fare'],
       cancellationFee: json['cancellation_fee'],

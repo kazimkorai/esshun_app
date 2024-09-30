@@ -11,7 +11,7 @@ import '../utils/Extensions/AppButtonWidget.dart';
 import '../utils/Extensions/app_common.dart';
 
 class CarDetailWidget extends StatefulWidget {
-  final ServicesListData service;
+  final ServicesListDataEstimate service;
 
   CarDetailWidget({required this.service});
 

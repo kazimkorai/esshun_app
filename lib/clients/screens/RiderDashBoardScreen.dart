@@ -539,73 +539,76 @@ class RiderDashBoardScreenState extends State<RiderDashBoardScreen> {
                         backdropTapClosesPanel: true,
                         minHeight: 130,
                         maxHeight: 200,
-                        panel: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                alignment: Alignment.center,
-                                margin: EdgeInsets.only(bottom: 16),
-                                height: 5,
-                                width: 70,
-                                decoration: BoxDecoration(
-                                    color: primaryColor,
-                                    borderRadius:
-                                        BorderRadius.circular(defaultRadius)),
+                        panel: Padding(
+                          padding: const EdgeInsets.only(left: 11,right: 11,bottom: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  margin: EdgeInsets.only(bottom: 16),
+                                  height: 5,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                      color: primaryColor,
+                                      borderRadius:
+                                          BorderRadius.circular(defaultRadius)),
+                                ),
                               ),
-                            ),
-                            Text(
-                                language.whatWouldYouLikeToGo
-                                    .capitalizeFirstLetter(),
-                                style: primaryTextStyle()),
-                            SizedBox(height: 16),
-                            AppTextField(
-                              autoFocus: false,
-                              readOnly: true,
-                              onTap: () async {
-                                if (await checkPermission()) {
-                                  showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft:
-                                              Radius.circular(defaultRadius),
-                                          topRight:
-                                              Radius.circular(defaultRadius)),
-                                    ),
-                                    context: context,
-                                    builder: (_) {
-                                      return
-                                        RiderWidget(
-                                        title: sourceLocationTitle);
-                                    },
-                                  );
-                                }
-                              },
-                              textFieldType: TextFieldType.EMAIL,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Feather.search),
-                                filled: true,
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius: radius(),
-                                    borderSide:
-                                        BorderSide(color: dividerColor)),
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: radius(),
-                                    borderSide:
-                                        BorderSide(color: dividerColor)),
-                                border: OutlineInputBorder(
-                                    borderRadius: radius(),
-                                    borderSide:
-                                        BorderSide(color: dividerColor)),
-                                hintText: language.enterYourDestination,
+                              Text(
+                                  language.whatWouldYouLikeToGo
+                                      .capitalizeFirstLetter(),
+                                  style: primaryTextStyle()),
+                              SizedBox(height: 16),
+                              AppTextField(
+                                autoFocus: false,
+                                readOnly: true,
+                                onTap: () async {
+                                  if (await checkPermission()) {
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft:
+                                                Radius.circular(defaultRadius),
+                                            topRight:
+                                                Radius.circular(defaultRadius)),
+                                      ),
+                                      context: context,
+                                      builder: (_) {
+                                        return
+                                          RiderWidget(
+                                          title: sourceLocationTitle);
+                                      },
+                                    );
+                                  }
+                                },
+                                textFieldType: TextFieldType.EMAIL,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  prefixIcon: Icon(Feather.search),
+                                  filled: true,
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: radius(),
+                                      borderSide:
+                                          BorderSide(color: dividerColor)),
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: radius(),
+                                      borderSide:
+                                          BorderSide(color: dividerColor)),
+                                  border: OutlineInputBorder(
+                                      borderRadius: radius(),
+                                      borderSide:
+                                          BorderSide(color: dividerColor)),
+                                  hintText: language.enterYourDestination,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 16),
-                          ],
+                              SizedBox(height: 16),
+                            ],
+                          ),
                         ),
                       ),
               ],

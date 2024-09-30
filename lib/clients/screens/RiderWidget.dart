@@ -182,7 +182,7 @@ class RiderWidgetState extends State<RiderWidget> {
                           SizedBox(width: 16),
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(bottom: 0),
+                              padding: EdgeInsets.only(bottom: 0,left: 12,right: 12),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +307,7 @@ class RiderWidgetState extends State<RiderWidget> {
                               if (sourceLocation.text.isNotEmpty &&
                                   destinationLocation.text.isNotEmpty) {
                                 launchScreen(
-                                    context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                                    context, NewEstimateRideListWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
                                     pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
                                 // showBottomSheetType(context);
                                 // launchScreen(
@@ -324,7 +324,7 @@ class RiderWidgetState extends State<RiderWidget> {
                               if (sourceLocation.text.isNotEmpty &&
                                   destinationLocation.text.isNotEmpty) {
                                 launchScreen(
-                                    context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                                    context, NewEstimateRideListWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
                                     pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
                                 //  showBottomSheetType(context);
                                 // launchScreen(
@@ -368,8 +368,9 @@ class RiderWidgetState extends State<RiderWidget> {
                           log(destinationLocation.text);
 
                           launchScreen(
-                              context, ServicesWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                              context, NewEstimateRideListWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
                               pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
+
                           //  showBottomSheetType(context);
                           // launchScreen(
                           //     context, NewEstimateRideListWidget(sourceLatLog: polylineSource, destinationLatLog: polylineDestination, sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
@@ -408,6 +409,9 @@ class RiderWidgetState extends State<RiderWidget> {
                         InkWell(
                           onTap: (){
 
+                             launchScreen(
+                                 context, NewEstimateRideListWidget(sourceLatLog: LatLng(23.6065715, 58.2252696), destinationLatLog: LatLng(23.60657,58.2352696), sourceTitle: sourceLocation.text, destinationTitle: destinationLocation.text),
+                                 pageRouteAnimation: PageRouteAnimation.SlideBottomTop);
 
 
                             // launchScreen(
